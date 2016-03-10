@@ -14,5 +14,7 @@
     <string name="a11y_add_stock_content_description">Add Stock</string>
     <string name="a11y_symbol">Symbol: <xliff:g id="symbol">%1$s</xliff:g></string>
     <string name="a11y_symbol_price">Price: <xliff:g id="bid_price">%1$s</xliff:g></string>
-    <string name="a11y_symbol_change"><xliff:g id="up_down">%1$s</xliff:g> by <xliff:g id="change">%2$s</xliff:g></string>
+    <string name="a11y_symbol_change_up">up</string>
+    <string name="a11y_symbol_change_down">down</string>
+    <string name="a11y_symbol_change">%1$s by <xliff:g id="change">%2$s</xliff:g></string>
 </resources>
