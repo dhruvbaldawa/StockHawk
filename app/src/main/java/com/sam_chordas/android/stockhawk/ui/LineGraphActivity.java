@@ -1,7 +1,6 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,26 +21,44 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class LineGraphActivity extends Activity{
     private static final String LOG_TAG = LineGraphActivity.class.getSimpleName();
     private static final int HTTP_REQUEST_TAG = 0;
 
-    private Context mContext;
     private LineChart mLineChart;
     private OkHttpClient mHttpClient;
+    private String mSymbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = this;
+        if (savedInstanceState == null) {
+            mSymbol = getIntent().getStringExtra("symbol");
+        } else {
+            mSymbol = savedInstanceState.getString("symbol");
+        }
 
         setContentView(R.layout.activity_line_graph);
         mLineChart = (LineChart) findViewById(R.id.linechart);
 
         mHttpClient = new OkHttpClient();
-        fetchHistoricalData("YHOO", "2015-02-09", "2015-03-09");
+        refreshHistoricalData();
+    }
+
+    private void refreshHistoricalData() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        Date today = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        Date fromDate = calendar.getTime();
+
+        fetchHistoricalData(mSymbol, dateFormat.format(fromDate), dateFormat.format(today));
     }
 
     private void fetchHistoricalData(String symbol, String startDate, String endDate) {
