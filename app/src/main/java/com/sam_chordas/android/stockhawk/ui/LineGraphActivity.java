@@ -3,6 +3,7 @@ package com.sam_chordas.android.stockhawk.ui;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
@@ -128,11 +129,20 @@ public class LineGraphActivity extends Activity{
                             .getJSONObject(API_RESULTS_KEY)
                             .getJSONArray(API_QUOTES_KEY);
 
-                    // adding the data in reverse
-                    for (int i = count - 1; i >= 0; i--) {
-                        xValues.add(quotesJSON.getJSONObject(i).getString(API_DATE_KEY));
-                        yValues.add(new Entry(Float.parseFloat(
-                                quotesJSON.getJSONObject(i).getString(API_CLOSE_KEY)), i));
+                    if (ViewCompat.getLayoutDirection(mLineChart) == ViewCompat.LAYOUT_DIRECTION_LTR) {
+                        // adding the data in reverse
+                        for (int i = count - 1; i >= 0; i--) {
+                            xValues.add(quotesJSON.getJSONObject(i).getString(API_DATE_KEY));
+                            yValues.add(new Entry(Float.parseFloat(
+                                    quotesJSON.getJSONObject(i).getString(API_CLOSE_KEY)), count - i + 1));
+                        }
+                    } else {
+                        for (int i = 0; i < count; i++) {
+                            xValues.add(quotesJSON.getJSONObject(i).getString(API_DATE_KEY));
+                            yValues.add(new Entry(Float.parseFloat(
+                                    quotesJSON.getJSONObject(i).getString(API_CLOSE_KEY)), i));
+
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
