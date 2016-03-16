@@ -17,4 +17,12 @@
     <string name="a11y_symbol_change_up">up</string>
     <string name="a11y_symbol_change_down">down</string>
     <string name="a11y_symbol_change">%1$s by <xliff:g id="change">%2$s</xliff:g></string>
+    <string name="radio_button_7day_label">7d</string>
+    <string name="a11y_radio_button_7day">7 days</string>
+    <string name="radio_button_30day_label">30d</string>
+    <string name="a11y_radio_button_30day">30 days</string>
+    <string name="radio_button_1year_label">1y</string>
+    <string name="a11y_radio_button_1year">1 year</string>
+    <string name="radio_button_6month_label">6m</string>
+    <string name="a11y_radio_button_6month">6 months</string>
 </resources>

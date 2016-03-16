@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RadioButton;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -35,6 +37,11 @@ public class LineGraphActivity extends Activity{
     private OkHttpClient mHttpClient;
     private String mSymbol;
 
+    private static final int TIME_7_DAYS = 1;
+    private static final int TIME_30_DAYS = 2;
+    private static final int TIME_6_MONTHS = 3;
+    private static final int TIME_YEAR = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,16 +55,31 @@ public class LineGraphActivity extends Activity{
         mLineChart = (LineChart) findViewById(R.id.linechart);
 
         mHttpClient = new OkHttpClient();
-        refreshHistoricalData();
+
+        RadioButton defaultRadio = (RadioButton)findViewById(R.id.radio_button_30day);
+        defaultRadio.toggle();
+        onRadioButtonClicked(defaultRadio);
     }
 
-    private void refreshHistoricalData() {
+    private void refreshHistoricalData(int timeFrame) {
+        mLineChart.clear();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
-        calendar.add(Calendar.MONTH, -1);
+        switch (timeFrame) {
+            case TIME_7_DAYS:
+                calendar.add(Calendar.DAY_OF_MONTH, -7);
+                break;
+            case TIME_30_DAYS:
+                calendar.add(Calendar.DAY_OF_MONTH, -30);
+                break;
+            case TIME_6_MONTHS:
+                calendar.add(Calendar.MONTH, -6);
+                break;
+            case TIME_YEAR:
+                calendar.add(Calendar.YEAR, -1);
+        }
         Date fromDate = calendar.getTime();
-
         fetchHistoricalData(mSymbol, dateFormat.format(fromDate), dateFormat.format(today));
     }
 
@@ -116,7 +138,7 @@ public class LineGraphActivity extends Activity{
                     e.printStackTrace();
                 }
 
-                final LineDataSet dataSet = new LineDataSet(yValues, "Dataset");
+                final LineDataSet dataSet = new LineDataSet(yValues, mSymbol);
                 ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
                 dataSets.add(dataSet);
 
@@ -131,5 +153,32 @@ public class LineGraphActivity extends Activity{
                 });
             }
         });
+    }
+
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+
+        switch (view.getId()) {
+            case R.id.radio_button_7day:
+                if (checked) {
+                    refreshHistoricalData(TIME_7_DAYS);
+                }
+                break;
+            case R.id.radio_button_30day:
+                if (checked) {
+                    refreshHistoricalData(TIME_30_DAYS);
+                }
+                break;
+            case R.id.radio_button_6month:
+                if (checked) {
+                    refreshHistoricalData(TIME_6_MONTHS);
+                }
+                break;
+            case R.id.radio_button_1year:
+                if (checked) {
+                    refreshHistoricalData(TIME_YEAR);
+                }
+                break;
+        }
     }
 }
