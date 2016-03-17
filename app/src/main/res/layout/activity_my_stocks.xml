@@ -1,31 +1,38 @@
-
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:orientation="vertical">
 
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/recycler_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      />
+    <TextView
+        android:id="@+id/message_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:background="@color/material_red_700"
+        android:textSize="16dp"
+        android:textColor="#FFF"
+        android:textAlignment="center"
+        android:visibility="gone" />
 
-  <com.melnykov.fab.FloatingActionButton
-      android:id="@+id/fab"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|right|end"
-      android:layout_margin="16dp"
-      android:src="@drawable/ic_add_white_24dp"
-      android:contentDescription="@string/a11y_add_stock_content_description"
-      fab:fab_colorNormal="@color/material_blue_500"
-      fab:fab_colorPressed="@color/material_blue_600"
-      fab:fab_colorRipple="@color/ripple"
-      fab:fab_shadow="true"
-      fab:fab_type="normal"
-      fab:layout_anchor="recycler_view"
-      fab:layout_anchorGravity="bottom"
-      />
-</FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/a11y_add_stock_content_description"
+        android:src="@drawable/ic_add_white_24dp"
+        fab:fab_colorNormal="@color/material_blue_500"
+        fab:fab_colorPressed="@color/material_blue_600"
+        fab:fab_colorRipple="@color/ripple"
+        fab:fab_shadow="true"
+        fab:fab_type="normal"
+        fab:layout_anchor="recycler_view"
+        fab:layout_anchorGravity="bottom" />
+</LinearLayout>

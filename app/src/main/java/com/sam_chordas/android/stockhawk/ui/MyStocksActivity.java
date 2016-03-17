@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -50,6 +51,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     private ItemTouchHelper mItemTouchHelper;
     private static final int CURSOR_LOADER_ID = 0;
     private QuoteCursorAdapter mCursorAdapter;
+    private TextView mMessageView;
     private Context mContext;
     private Cursor mCursor;
     boolean isConnected;
@@ -65,6 +67,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         setContentView(R.layout.activity_my_stocks);
+        mMessageView = (TextView) findViewById(R.id.message_view);
+
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
         mServiceIntent = new Intent(this, StockIntentService.class);
@@ -75,6 +79,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 startService(mServiceIntent);
             } else {
                 networkToast();
+                showMessage(getString(R.string.network_toast));
             }
         }
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -92,7 +97,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     }
                 }));
         recyclerView.setAdapter(mCursorAdapter);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.attachToRecyclerView(recyclerView);
@@ -129,6 +133,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                             .show();
                 } else {
                     networkToast();
+                    showMessage(getString(R.string.network_toast));
                 }
 
             }
@@ -176,6 +181,16 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
+    }
+
+    public void showMessage(String message) {
+        mMessageView.setText(message);
+        mMessageView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideMessage() {
+        mMessageView.setText("");
+        mMessageView.setVisibility(View.GONE);
     }
 
     @Override

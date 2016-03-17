@@ -1,9 +1,9 @@
 package com.sam_chordas.android.stockhawk.ui;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LineGraphActivity extends Activity{
+public class LineGraphActivity extends AppCompatActivity {
     private static final String LOG_TAG = LineGraphActivity.class.getSimpleName();
     private static final int HTTP_REQUEST_TAG = 0;
 
@@ -53,6 +53,7 @@ public class LineGraphActivity extends Activity{
         }
 
         setContentView(R.layout.activity_line_graph);
+        setTitle(mSymbol);
         mLineChart = (LineChart) findViewById(R.id.linechart);
 
         mHttpClient = new OkHttpClient();
