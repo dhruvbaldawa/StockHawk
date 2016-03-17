@@ -91,8 +91,8 @@ public class LineGraphActivity extends Activity{
 
         Uri builtUri = Uri.parse(YAHOO_API_BASE_URL).buildUpon()
                 .appendQueryParameter("env", "store://datatables.org/alltableswithkeys")
-                .appendQueryParameter("q", query)
                 .appendQueryParameter("format", "json")
+                .appendQueryParameter("q", query)
                 .build();
 
         Request request = new Request.Builder()
