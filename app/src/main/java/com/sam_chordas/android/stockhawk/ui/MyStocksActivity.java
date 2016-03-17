@@ -68,6 +68,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 activeNetwork.isConnectedOrConnecting();
         setContentView(R.layout.activity_my_stocks);
         mMessageView = (TextView) findViewById(R.id.message_view);
+        hideMessage();
 
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
@@ -79,7 +80,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 startService(mServiceIntent);
             } else {
                 networkToast();
-                showMessage(getString(R.string.network_toast));
+                showMessage(getString(R.string.message_out_of_sync));
             }
         }
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -133,7 +134,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                             .show();
                 } else {
                     networkToast();
-                    showMessage(getString(R.string.network_toast));
+                    showMessage(getString(R.string.message_network_not_available));
                 }
 
             }

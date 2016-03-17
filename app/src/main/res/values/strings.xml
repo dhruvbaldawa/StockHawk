@@ -11,6 +11,9 @@
     <string name="input_prefill"></string>
     <string name="widget_title">Today\'s Market</string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="message_network_not_available">Oops! No active internet connection present</string>
+    <string name="message_out_of_sync">Sorry, sync failed! Data might be outdated</string>
+    <string name="message_empty_list">What are you waiting for? Add some stock symbols!</string>
     <string name="a11y_add_stock_content_description">Add Stock</string>
     <string name="a11y_symbol">Symbol: <xliff:g id="symbol">%1$s</xliff:g></string>
     <string name="a11y_symbol_price">Price: <xliff:g id="bid_price">%1$s</xliff:g></string>
