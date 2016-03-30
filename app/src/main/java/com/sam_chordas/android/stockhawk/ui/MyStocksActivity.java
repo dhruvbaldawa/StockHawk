@@ -237,6 +237,15 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mCursorAdapter.swapCursor(data);
         mCursor = data;
+        if (mCursorAdapter.getItemCount() == 0) {
+            if (!Utils.isNetworkAvailable(this)) {
+                showMessage(getString(R.string.message_network_not_available));
+            } else {
+                showMessage(getString(R.string.message_empty_list));
+            }
+        } else {
+            hideMessage();
+        }
     }
 
     @Override
