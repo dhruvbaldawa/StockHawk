@@ -6,12 +6,16 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
+import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
@@ -20,6 +24,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by sam_chordas on 9/30/15.
@@ -81,10 +86,11 @@ public class StockTaskService extends GcmTaskService {
                 }
                 queryBuilder.replace(queryBuilder.length() - 1, queryBuilder.length(), ")");
             }
+            initQueryCursor.close();
         } else if (params.getTag().equals("add")) {
             isUpdate = false;
             // get symbol from params.getExtra and build query
-            String stockInput = params.getExtras().getString("symbol");
+            String stockInput = params.getExtras().getString("symbol").toUpperCase();
             queryBuilder.append("\"" + stockInput + "\")");
         }
         // finalize the URL for the API query.
@@ -110,8 +116,20 @@ public class StockTaskService extends GcmTaskService {
                 mContext.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
                         null, null);
             }
-            mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
-                    Utils.quoteJsonToContentVals(getResponse));
+            ArrayList contentVals = Utils.quoteJsonToContentVals(getResponse);
+            if (contentVals == null) {
+                // Ref: http://stackoverflow.com/a/23427394
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mContext,
+                                R.string.toast_symbol_not_found, Toast.LENGTH_LONG).show();
+                    }
+                });
+                return GcmNetworkManager.RESULT_FAILURE;
+            }
+            mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY, contentVals);
         } catch (RemoteException | OperationApplicationException e) {
             Log.e(LOG_TAG, "Error applying batch insert", e);
         }

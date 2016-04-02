@@ -2,6 +2,7 @@ package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -51,6 +52,8 @@ public class Utils {
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "String to JSON failed: " + e);
+        } catch (OperationApplicationException e) {
+            return null;
         }
         return batchOperations;
     }
@@ -77,13 +80,18 @@ public class Utils {
         return change;
     }
 
-    public static ContentProviderOperation buildBatchOperation(JSONObject jsonObject) {
+    public static ContentProviderOperation buildBatchOperation(JSONObject jsonObject) throws OperationApplicationException {
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
                 QuoteProvider.Quotes.CONTENT_URI);
         try {
             String change = jsonObject.getString("Change");
             builder.withValue(QuoteColumns.SYMBOL, jsonObject.getString("symbol"));
-            builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(jsonObject.getString("Bid")));
+            String bidPrice = jsonObject.getString("Bid");
+            if (bidPrice == "null") {
+                // the symbol is invalid
+                throw new OperationApplicationException("Invalid data for symbol returned");
+            }
+            builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(bidPrice));
             builder.withValue(QuoteColumns.PERCENT_CHANGE, truncateChange(
                     jsonObject.getString("ChangeinPercent"), true));
             builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
