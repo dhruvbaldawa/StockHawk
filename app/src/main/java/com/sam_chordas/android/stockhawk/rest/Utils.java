@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
@@ -113,5 +116,20 @@ public class Utils {
                 (ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+    public static void showToastAsync(final Context c, final CharSequence message, final int duration) {
+        // Ref: http://stackoverflow.com/a/23427394
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(c, message, duration).show();
+            }
+        });
+    }
+
+    public static void showToastAsync(final Context c, final int res, final int duration) {
+        showToastAsync(c, c.getString(res), duration);
     }
 }

@@ -6,8 +6,6 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -52,6 +50,7 @@ public class StockTaskService extends GcmTaskService {
                 .build();
 
         Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("error sending request: " + response);
         return response.body().string();
     }
 
@@ -104,6 +103,7 @@ public class StockTaskService extends GcmTaskService {
             getResponse = fetchData(urlString);
         } catch (IOException e) {
             e.printStackTrace();
+            Utils.showToastAsync(mContext, R.string.toast_network_failure, Toast.LENGTH_LONG);
             return result;
         }
 
@@ -118,15 +118,7 @@ public class StockTaskService extends GcmTaskService {
             }
             ArrayList contentVals = Utils.quoteJsonToContentVals(getResponse);
             if (contentVals == null) {
-                // Ref: http://stackoverflow.com/a/23427394
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(mContext,
-                                R.string.toast_symbol_not_found, Toast.LENGTH_LONG).show();
-                    }
-                });
+                Utils.showToastAsync(mContext, R.string.toast_symbol_not_found, Toast.LENGTH_LONG);
                 return GcmNetworkManager.RESULT_FAILURE;
             }
             mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY, contentVals);
