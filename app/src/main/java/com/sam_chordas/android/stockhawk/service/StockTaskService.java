@@ -2,6 +2,7 @@ package com.sam_chordas.android.stockhawk.service;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -31,10 +32,10 @@ import java.util.ArrayList;
  */
 public class StockTaskService extends GcmTaskService {
     private String LOG_TAG = StockTaskService.class.getSimpleName();
+    public static final String STOCK_DATA_UPDATED = "com.sam_chordas.android.stockhawk.STOCK_DATA_UPDATED";
 
     private OkHttpClient client = new OkHttpClient();
     private Context mContext;
-    private StringBuilder mStoredSymbols = new StringBuilder();
     private boolean isUpdate;
 
     public StockTaskService() {
@@ -126,6 +127,8 @@ public class StockTaskService extends GcmTaskService {
             Log.e(LOG_TAG, "Error applying batch insert", e);
         }
 
+        Intent dataUpdatedIntent = new Intent(STOCK_DATA_UPDATED);
+        mContext.sendBroadcast(dataUpdatedIntent);
         return result;
     }
 }
