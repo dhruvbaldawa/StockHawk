@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
 import android.os.Build;
+import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.rest.Utils;
 
 /**
  * Created by dhruv on 4/6/16.
@@ -58,27 +61,41 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
             @Override
             public RemoteViews getViewAt(int position) {
-                return null;
+                if (position == AdapterView.INVALID_POSITION || data == null ||
+                        !data.moveToPosition(position)) {
+                    return null;
+                }
+
+                RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_collection_item);
+                views.setTextViewText(R.id.stock_symbol, data.getString(data.getColumnIndex("symbol")));
+                String strChange;
+                if (Utils.showPercent) {
+                    strChange = data.getString(data.getColumnIndex("percent_change"));
+                } else {
+                    strChange = data.getString(data.getColumnIndex("change"));
+                }
+                views.setTextViewText(R.id.change, strChange);
+                return views;
             }
 
             @Override
             public RemoteViews getLoadingView() {
-                return null;
+                return new RemoteViews(getPackageName(), R.layout.widget_collection_item);
             }
 
             @Override
             public int getViewTypeCount() {
-                return 0;
+                return 1;
             }
 
             @Override
             public long getItemId(int position) {
-                return 0;
+                return position;
             }
 
             @Override
             public boolean hasStableIds() {
-                return false;
+                return true;
             }
         };
     }

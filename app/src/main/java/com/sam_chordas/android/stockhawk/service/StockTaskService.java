@@ -127,7 +127,7 @@ public class StockTaskService extends GcmTaskService {
             Log.e(LOG_TAG, "Error applying batch insert", e);
         }
 
-        Intent dataUpdatedIntent = new Intent(STOCK_DATA_UPDATED);
+        Intent dataUpdatedIntent = new Intent(STOCK_DATA_UPDATED).setPackage(mContext.getPackageName());
         mContext.sendBroadcast(dataUpdatedIntent);
         return result;
     }

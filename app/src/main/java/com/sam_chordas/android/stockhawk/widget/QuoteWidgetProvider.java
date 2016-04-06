@@ -39,7 +39,7 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
 
             Intent launchIntent = new Intent(context, MyStocksActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchIntent, 0);
-            views.setOnClickPendingIntent(R.id.widget_list, pendingIntent);
+            views.setOnClickPendingIntent(R.id.widget, pendingIntent);
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
