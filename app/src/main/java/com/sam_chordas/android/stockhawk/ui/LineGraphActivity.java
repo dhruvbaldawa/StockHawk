@@ -65,6 +65,12 @@ public class LineGraphActivity extends AppCompatActivity {
         onRadioButtonClicked(defaultRadio);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("symbol", mSymbol);
+        super.onSaveInstanceState(outState);
+    }
+
     private void refreshHistoricalData(int timeFrame) {
         mLineChart.clear();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
