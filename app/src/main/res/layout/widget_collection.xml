@@ -29,8 +29,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
-            android:dividerHeight="0dp"
-            tools:listitem="@layout/widget_collection_item"/>
+            android:dividerHeight="0dp"/>
+        <TextView
+            android:id="@+id/empty_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No stocks available" />
     </FrameLayout>
 
 </LinearLayout>

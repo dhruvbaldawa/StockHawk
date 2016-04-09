@@ -1,16 +1,18 @@
 package com.sam_chordas.android.stockhawk.widget;
 
 import android.annotation.TargetApi;
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
 import android.os.Build;
+import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.sam_chordas.android.stockhawk.R;
-import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
 
@@ -23,80 +25,94 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new RemoteViewsFactory() {
-            private Cursor data = null;
+        return new StockRemoteViewsFactory(this.getApplicationContext(), intent);
+    }
 
-            @Override
-            public void onCreate() {
 
+    class StockRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory  {
+        private Context mContext;
+        private Cursor mCursor = null;
+        private int mAppWidgetId;
+
+        public StockRemoteViewsFactory(Context context, Intent intent) {
+            Log.d(LOG_TAG, "StockRemoteViewsFactory() called with: " + "context = [" + context + "], intent = [" + intent + "]");
+            mContext = context;
+            mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        @Override
+        public void onCreate() {
+
+        }
+
+        @Override
+        public void onDataSetChanged() {
+            Log.d(LOG_TAG, "onDataSetChanged() called with: " + "");
+            if (mCursor != null) {
+                mCursor.close();
             }
 
-            @Override
-            public void onDataSetChanged() {
-                if (data != null) {
-                    data.close();
-                }
-                final long identityToken = Binder.clearCallingIdentity();
-                data = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                        new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
-                        QuoteColumns.PERCENT_CHANGE, QuoteColumns.CHANGE, QuoteColumns.ISUP},
-                        QuoteColumns.ISCURRENT + " = ?",
-                        new String[]{"1"},
-                        null);
-                Binder.restoreCallingIdentity(identityToken);
+            final long identityToken = Binder.clearCallingIdentity();
+            mCursor = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null);
+            Binder.restoreCallingIdentity(identityToken);
+        }
+
+        @Override
+        public void onDestroy() {
+            if (mCursor != null) {
+                mCursor.close();
+                mCursor = null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return (mCursor == null) ? 0 : mCursor.getCount();
+        }
+
+        @Override
+        public RemoteViews getViewAt(int position) {
+            Log.d(LOG_TAG, "getViewAt() called with: " + "position = [" + position + "]");
+            if (position == AdapterView.INVALID_POSITION || mCursor == null ||
+                    !mCursor.moveToPosition(position)) {
+                return null;
             }
 
-            @Override
-            public void onDestroy() {
-                if (data != null) {
-                    data.close();
-                    data = null;
-                }
+            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_collection_item);
+            views.setTextViewText(R.id.stock_symbol, mCursor.getString(mCursor.getColumnIndex("symbol")));
+            String strChange;
+            if (Utils.showPercent) {
+                strChange = mCursor.getString(mCursor.getColumnIndex("percent_change"));
+            } else {
+                strChange = mCursor.getString(mCursor.getColumnIndex("change"));
             }
+            views.setTextViewText(R.id.change, strChange);
+            return views;
+        }
 
-            @Override
-            public int getCount() {
-                return (data == null) ? 0 : data.getCount();
-            }
+        @Override
+        public RemoteViews getLoadingView() {
+            return null;
+        }
 
-            @Override
-            public RemoteViews getViewAt(int position) {
-                if (position == AdapterView.INVALID_POSITION || data == null ||
-                        !data.moveToPosition(position)) {
-                    return null;
-                }
+        @Override
+        public int getViewTypeCount() {
+            return 1;
+        }
 
-                RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_collection_item);
-                views.setTextViewText(R.id.stock_symbol, data.getString(data.getColumnIndex("symbol")));
-                String strChange;
-                if (Utils.showPercent) {
-                    strChange = data.getString(data.getColumnIndex("percent_change"));
-                } else {
-                    strChange = data.getString(data.getColumnIndex("change"));
-                }
-                views.setTextViewText(R.id.change, strChange);
-                return views;
-            }
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
-            @Override
-            public RemoteViews getLoadingView() {
-                return new RemoteViews(getPackageName(), R.layout.widget_collection_item);
-            }
-
-            @Override
-            public int getViewTypeCount() {
-                return 1;
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
-            @Override
-            public boolean hasStableIds() {
-                return true;
-            }
-        };
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
     }
 }

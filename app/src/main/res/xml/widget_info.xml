@@ -5,4 +5,4 @@
     android:minWidth="@dimen/widget_default_width"
     android:minResizeHeight="@dimen/widget_default_height"
     android:minResizeWidth="@dimen/widget_default_width"
-    android:updatePeriodMillis="0"/>
+    android:updatePeriodMillis="10"/>
