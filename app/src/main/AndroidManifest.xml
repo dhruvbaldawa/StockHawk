@@ -59,7 +59,7 @@
         <service android:name=".widget.QuoteWidgetRemoteViewsService"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTE_VIEWS"/>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
         <activity
             android:name=".ui.LineGraphActivity"
             android:parentActivityName=".ui.MyStocksActivity">
