@@ -5,9 +5,9 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.Build;
-import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -29,14 +29,12 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
         return new StockRemoteViewsFactory(this.getApplicationContext(), intent);
     }
 
-
     class StockRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory  {
         private Context mContext;
         private Cursor mCursor = null;
         private int mAppWidgetId;
 
         public StockRemoteViewsFactory(Context context, Intent intent) {
-            Log.d(LOG_TAG, "StockRemoteViewsFactory() called with: " + "context = [" + context + "], intent = [" + intent + "]");
             mContext = context;
             mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -49,7 +47,6 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
         @Override
         public void onDataSetChanged() {
-            Log.d(LOG_TAG, "onDataSetChanged() called with: " + "");
             if (mCursor != null) {
                 mCursor.close();
             }
@@ -79,7 +76,6 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
         @Override
         public RemoteViews getViewAt(int position) {
-            Log.d(LOG_TAG, "getViewAt() called with: " + "position = [" + position + "]");
             if (position == AdapterView.INVALID_POSITION || mCursor == null ||
                     !mCursor.moveToPosition(position)) {
                 return null;
@@ -87,13 +83,21 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
             RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_collection_item);
             views.setTextViewText(R.id.stock_symbol, mCursor.getString(mCursor.getColumnIndex("symbol")));
+            views.setTextViewText(R.id.bid_price, mCursor.getString(mCursor.getColumnIndex("bid_price")));
             String strChange;
             if (Utils.showPercent) {
                 strChange = mCursor.getString(mCursor.getColumnIndex("percent_change"));
             } else {
                 strChange = mCursor.getString(mCursor.getColumnIndex("change"));
             }
+
+            if (mCursor.getInt(mCursor.getColumnIndex("is_up")) == 1) {
+                views.setTextColor(R.id.change, Color.GREEN);
+            } else {
+                views.setTextColor(R.id.change, Color.RED);
+            }
             views.setTextViewText(R.id.change, strChange);
+
             return views;
         }
 
