@@ -1,5 +1,6 @@
 package com.sam_chordas.android.stockhawk.ui;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
@@ -10,6 +11,8 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -57,6 +60,19 @@ public class LineGraphActivity extends AppCompatActivity {
         setContentView(R.layout.activity_line_graph);
         setTitle(mSymbol);
         mLineChart = (LineChart) findViewById(R.id.linechart);
+        mLineChart.setNoDataText(getString(R.string.line_graph_chart_no_data));
+        mLineChart.setBorderColor(Color.WHITE);
+        mLineChart.setDescription("");
+        mLineChart.setDescriptionColor(Color.WHITE);
+
+        mLineChart.getXAxis().setTextColor(Color.WHITE);
+        mLineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        mLineChart.getAxisLeft().setTextColor(Color.YELLOW);
+        mLineChart.getAxisRight().setTextColor(Color.YELLOW);
+        mLineChart.getAxisRight().setDrawTopYLabelEntry(false);
+
+        Legend legend = mLineChart.getLegend();
+        legend.setTextColor(Color.WHITE);
 
         mHttpClient = new OkHttpClient();
 
@@ -159,6 +175,8 @@ public class LineGraphActivity extends AppCompatActivity {
                 }
 
                 final LineDataSet dataSet = new LineDataSet(yValues, mSymbol);
+                dataSet.setValueTextColor(Color.LTGRAY);
+                dataSet.setLineWidth(2.0f);
                 ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
                 dataSets.add(dataSet);
 

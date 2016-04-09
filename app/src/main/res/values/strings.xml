@@ -31,4 +31,5 @@
     <string name="toast_symbol_not_found">Sorry mate, couldn\'t find the symbol you are looking for. \nPlease check and try again</string>
     <string name="toast_network_failure">Oops! There was a problem sending request.\nPlease check your network connection</string>
     <string name="widget_empty_list">No stocks available. Please add some stocks.</string>
+    <string name="line_graph_chart_no_data">Fetching information</string>
 </resources>
