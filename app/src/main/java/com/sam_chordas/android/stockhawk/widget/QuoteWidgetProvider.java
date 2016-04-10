@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.sam_chordas.android.stockhawk.R;
@@ -27,7 +26,6 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (StockTaskService.STOCK_DATA_UPDATED.equals(intent.getAction())) {
-            Log.d(LOG_TAG, "onReceive() called with: " + "context = [" + context + "], intent = [" + intent + "]");
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, getClass()));
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
@@ -36,14 +34,17 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(LOG_TAG, "onUpdate() called with: " + "context = [" + context + "], appWidgetManager = [" + appWidgetManager + "], appWidgetIds = [" + appWidgetIds + "]");
         for (int appWidgetId : appWidgetIds) {
             Intent intent = new Intent(context, QuoteWidgetRemoteViewsService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_collection);
-            views.setRemoteAdapter(R.id.widget_list, intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                views.setRemoteAdapter(R.id.widget_list, intent);
+            } else {
+                views.setRemoteAdapter(0, R.id.widget_list, intent);
+            }
             views.setEmptyView(R.id.widget_list, R.id.empty_list);
 
             Intent launchIntent = new Intent(context, MyStocksActivity.class);
