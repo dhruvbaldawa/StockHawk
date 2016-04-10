@@ -15,7 +15,7 @@
     <string name="message_out_of_sync">Yikes! Check network connection, data might be outdated!</string>
     <string name="message_empty_list">What are you waiting for? Add some stock symbols!</string>
     <string name="a11y_add_stock_content_description">Add Stock</string>
-    <string name="a11y_symbol">Symbol: <xliff:g id="symbol">%1$s</xliff:g></string>
+    <string name="a11y_symbol"><xliff:g id="name">%1$s</xliff:g>(<xliff:g id="symbol">%2$s</xliff:g>)</string>
     <string name="a11y_symbol_price">Price: <xliff:g id="bid_price">%1$s</xliff:g></string>
     <string name="a11y_symbol_change_up">up</string>
     <string name="a11y_symbol_change_down">down</string>

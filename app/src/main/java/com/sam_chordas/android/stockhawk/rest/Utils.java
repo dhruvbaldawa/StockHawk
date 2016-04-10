@@ -89,6 +89,7 @@ public class Utils {
         try {
             String change = jsonObject.getString("Change");
             builder.withValue(QuoteColumns.SYMBOL, jsonObject.getString("symbol"));
+            builder.withValue(QuoteColumns.NAME, jsonObject.getString("Name"));
             String bidPrice = jsonObject.getString("Bid");
             if (bidPrice == "null") {
                 // the symbol is invalid

@@ -53,7 +53,7 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
             final long identityToken = Binder.clearCallingIdentity();
             mCursor = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                    new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
+                    new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.NAME, QuoteColumns.BIDPRICE,
                             QuoteColumns.PERCENT_CHANGE, QuoteColumns.CHANGE, QuoteColumns.ISUP},
                     QuoteColumns.ISCURRENT + " = ?",
                     new String[]{"1"},
@@ -81,17 +81,20 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
                 return null;
             }
 
+            String symbol = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL));
+            String name = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.NAME));
             RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_collection_item);
-            views.setTextViewText(R.id.stock_symbol, mCursor.getString(mCursor.getColumnIndex("symbol")));
-            views.setTextViewText(R.id.bid_price, mCursor.getString(mCursor.getColumnIndex("bid_price")));
+            views.setTextViewText(R.id.stock_symbol, symbol);
+            views.setContentDescription(R.id.stock_symbol, mContext.getString(R.string.a11y_symbol, name, symbol));
+            views.setTextViewText(R.id.bid_price, mCursor.getString(mCursor.getColumnIndex(QuoteColumns.BIDPRICE)));
             String strChange;
             if (Utils.showPercent) {
-                strChange = mCursor.getString(mCursor.getColumnIndex("percent_change"));
+                strChange = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE));
             } else {
-                strChange = mCursor.getString(mCursor.getColumnIndex("change"));
+                strChange = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.CHANGE));
             }
 
-            if (mCursor.getInt(mCursor.getColumnIndex("is_up")) == 1) {
+            if (mCursor.getInt(mCursor.getColumnIndex(QuoteColumns.ISUP)) == 1) {
                 views.setTextColor(R.id.change, Color.GREEN);
             } else {
                 views.setTextColor(R.id.change, Color.RED);
